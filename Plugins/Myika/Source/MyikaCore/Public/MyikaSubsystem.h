@@ -42,9 +42,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Myika|Sky")
 	void SetTimeOfDay(float HoursZeroToTwentyFour);
 
+	/** Patch a single sun-direction vector without replacing the rest of the global state. */
+	UFUNCTION(BlueprintCallable, Category = "Myika|Sky|Sun")
+	void SetSunDirection(FVector NewSunDirection);
+
+	/** Patch a single moon-direction vector without replacing the rest of the global state. */
+	UFUNCTION(BlueprintCallable, Category = "Myika|Sky|Stars")
+	void SetMoonDirection(FVector NewMoonDirection);
+
 	/** Patch a single weather state; convenience for weather systems. */
 	UFUNCTION(BlueprintCallable, Category = "Myika|Weather")
 	void SetWeather(EMyikaWeatherState NewWeather);
+
+	/** Patch storm intensity 0..1; convenience for sky and weather systems. */
+	UFUNCTION(BlueprintCallable, Category = "Myika|Sky")
+	void SetStormIntensity(float NewStormIntensity);
+
+	/** Patch lightning flash 0..1; convenience for lightning and material reactions. */
+	UFUNCTION(BlueprintCallable, Category = "Myika|Sky|Lightning")
+	void SetLightningFlash(float NewLightningFlash);
 
 	/** Broadcast whenever any global field changes. */
 	UPROPERTY(BlueprintAssignable, Category = "Myika")

@@ -56,6 +56,7 @@ struct MYIKACORE_API FMyikaGlobalState
 	UPROPERTY(BlueprintReadOnly, Category = "Myika")
 	FVector SunDirection = FVector(0.f, 0.f, -1.f);
 
+	/** Unit-direction vector pointing FROM the moon (i.e. moonlight direction). */
 	UPROPERTY(BlueprintReadOnly, Category = "Myika")
 	FVector MoonDirection = FVector(0.f, 0.f, 1.f);
 
@@ -75,7 +76,15 @@ struct MYIKACORE_API FMyikaGlobalState
 	UPROPERTY(BlueprintReadOnly, Category = "Myika")
 	float Temperature = 20.f;
 
+	/** 0..1 instantaneous lightning flash intensity. */
+	UPROPERTY(BlueprintReadOnly, Category = "Myika")
+	float LightningFlash = 0.f;
+
 	/** Storm intensity 0..1 used by sky/cloud morphology. */
 	UPROPERTY(BlueprintReadOnly, Category = "Myika")
 	float StormIntensity = 0.f;
+
+	/** Global water plane height in cm. */
+	UPROPERTY(BlueprintReadOnly, Category = "Myika")
+	float WaterLevel = 0.f;
 };
