@@ -60,4 +60,10 @@ protected:
 
 private:
 	FVector ResolveCausticExtent() const;
+
+	// Re-entry guards: SetWaterMaterial / CreateChildActor / SetMobility can each
+	// trigger PostEditChangeProperty or further OnConstruction passes that re-enter
+	// these helpers, blowing the stack when AMyikaOcean is opened in the editor.
+	bool bApplyingDefaultMaterial = false;
+	bool bRefreshingCausticChild = false;
 };

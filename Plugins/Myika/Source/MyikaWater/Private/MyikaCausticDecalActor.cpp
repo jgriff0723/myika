@@ -63,6 +63,12 @@ void AMyikaCausticDecalActor::SetFallbackSunDirection(const FVector& NewSunDirec
 
 void AMyikaCausticDecalActor::RefreshDecal()
 {
+	if (bRefreshingDecal)
+	{
+		return;
+	}
+	TGuardValue<bool> ReentryGuard(bRefreshingDecal, true);
+
 	if (UDecalComponent* DecalComponent = GetDecal())
 	{
 		DecalComponent->DecalSize = ProjectionExtent;

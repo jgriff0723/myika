@@ -65,6 +65,12 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UMaterialInstanceDynamic> DynamicMaterial;
 
+	// Re-entry guard: PostEditChangeProperty fires whenever a UPROPERTY mutates,
+	// and RefreshDecal sets multiple component properties that can trigger
+	// another PostEditChangeProperty. Without this guard the editor stack-
+	// overflows when the caustic actor (or its parent ocean) is opened.
+	bool bRefreshingDecal = false;
+
 	void RefreshDecal();
 	void RefreshMaterialInstance();
 	void ApplyMaterialParameters();

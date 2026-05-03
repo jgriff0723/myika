@@ -59,6 +59,12 @@ void AMyikaOcean::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedE
 
 bool AMyikaOcean::ApplyDefaultWaterMaterial()
 {
+	if (bApplyingDefaultMaterial)
+	{
+		return false;
+	}
+	TGuardValue<bool> ReentryGuard(bApplyingDefaultMaterial, true);
+
 	UWaterBodyComponent* OceanWaterComponent = GetWaterBodyComponent();
 	if (OceanWaterComponent == nullptr || WaterMaterialAsset.IsNull())
 	{
@@ -86,6 +92,12 @@ bool AMyikaOcean::ApplyDefaultWaterMaterial()
 
 void AMyikaOcean::RefreshCausticChild()
 {
+	if (bRefreshingCausticChild)
+	{
+		return;
+	}
+	TGuardValue<bool> ReentryGuard(bRefreshingCausticChild, true);
+
 	if (CausticActorComponent == nullptr)
 	{
 		return;

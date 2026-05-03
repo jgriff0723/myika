@@ -22,12 +22,22 @@ AMyikaBoatPawn::AMyikaBoatPawn()
 
 	HullMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HullMesh"));
 	SetRootComponent(HullMesh);
-	HullMesh->SetSimulatePhysics(true);
-	HullMesh->SetEnableGravity(true);
-	HullMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
-	HullMesh->SetNotifyRigidBodyCollision(true);
 	HullMesh->SetCanEverAffectNavigation(false);
 	HullMesh->SetRelativeScale3D(FVector(3.25f, 1.35f, 0.55f));
+
+	// Physics-touching setters (SetSimulatePhysics, SetCollisionProfileName,
+	// SetNotifyRigidBodyCollision) call FBodyInstance::GetSimplePhysicalMaterial,
+	// which logs "GEngine not initialized" during native CDO construction and
+	// can escalate to a stack overflow when a derived BP is opened in the editor.
+	// Defer to non-CDO instances; final flags are reasserted in RefreshHullSetup
+	// during PostInitProperties / OnConstruction / BeginPlay.
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		HullMesh->SetSimulatePhysics(true);
+		HullMesh->SetEnableGravity(true);
+		HullMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
+		HullMesh->SetNotifyRigidBodyCollision(true);
+	}
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMesh(TEXT("/Engine/BasicShapes/Cube.Cube"));
 	if (CubeMesh.Succeeded())
@@ -66,7 +76,10 @@ AMyikaBoatPawn::AMyikaBoatPawn()
 	LookAction = LookIA.Object;
 	MouseLookAction = MouseLookIA.Object;
 
-	RefreshHullSetup();
+	if (!HasAnyFlags(RF_ClassDefaultObject))
+	{
+		RefreshHullSetup();
+	}
 }
 
 void AMyikaBoatPawn::BeginPlay()
