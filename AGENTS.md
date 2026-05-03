@@ -59,6 +59,78 @@ Before generating any code or content for a Myika slice, an agent MUST read:
 - **License whitelist** (per ASSET-ONBOARDING.md): CC0, CC-BY, MIT, Apache, public-domain, Jacob's own work, UE Engine content. Megascans = local only, never commit.
 - **Escalation budgets:** 3 build attempts / 5 PIE attempts / aesthetic always escalates / 2hr wall-clock. Hit the cap → drop a comment on the Linear issue and exit cleanly.
 
+## Mandatory in-task discipline (per ADR-0005)
+
+These are NOT optional. Agents that skip them violate the operating model and damage Linear/queue trust:
+
+### Linear sync (D4)
+
+- **Within 30 sec of claim:** transition the task's `linear_issue:` from Backlog → In Progress.
+- **On every escalation:** transition to In Review and post a comment with the failure mode + escalation budget consumed.
+- **On completion:** transition to In Review with the PIE proof link as a comment / attachment.
+- **NEVER** transition Linear to "Done" — only Jacob does that after aesthetic sign-off.
+
+Until ADR-0005 D9 (watcher-side auto-transition) lands, this is the agent's responsibility. Use the Linear MCP `save_issue` tool with `state` parameter.
+
+### Per-slice commit discipline
+
+- Work in the worktree the watcher created at `<repo>/../worktrees/<task-id>` on the `branch:` in your task frontmatter. **Never** check out a different branch in that worktree.
+- Commit incrementally as you make progress. Don't accumulate >50 changed files in an uncommitted state.
+- Final commit message format: `feat(<system>): MYI-NN <slice title>` — example: `feat(sky): MYI-55 V1-S1 MyikaSky module scaffold`.
+- Do NOT use `--no-verify` unless explicitly authorized. Whitespace failures are fixable mechanically.
+
+### Acceptance gate (D5)
+
+Before marking your task done (`active/ → done/`):
+
+1. **All `## Acceptance Criteria` checkboxes flipped to `- [x]`** — if you can't honestly check one, escalate, don't mark done.
+2. **`pie_proof:` frontmatter populated** with a real path or URL — screen recording, screenshot, Linear attachment, run-log path.
+3. **`## Out of Scope` section exists** in the task body confirming you stayed in your lane.
+4. **Run log filed** at `docs/runs/YYYY-MM-DD-myi-NN-<short-name>.md` per template.
+5. **Linear issue transitioned** to In Review with the proof attached.
+
+If any of these is missing, the task stays in `active/` and you must address it before retry.
+
+### Conflict awareness (D3)
+
+- The `touches:` field in your task frontmatter declares the files/globs you're allowed to write to.
+- If your work needs to write outside that list, escalate (don't quietly expand scope) — the watcher's conflict detection assumed you'd stay in the declared paths.
+- The `serializes_with:` field signals shared-resource lockouts. If you see `serializes_with: [shared-core]` on your task, you can assume no concurrent task is modifying MyikaCore. Trust it; don't double-check by reading files outside your `touches:` set.
+
+### Run-log discipline
+
+Every coding session that edits files MUST produce one entry under `docs/runs/`. Template:
+
+```markdown
+# MYI-NN / <slice-id> <title>
+
+Date: YYYY-MM-DD
+Repo: <repo path>
+Task: <queue task path>
+Branch: <branch>
+Worktree: <worktree path>
+
+## Code Landed In This Run
+- list of files added / modified
+
+## Validation
+- editor compile result
+- game compile result
+- PIE result + recording path
+
+## Linear
+- transitioned <state> -> <state> at <timestamp>
+- proof attached: <link>
+
+## Out of Scope
+- explicit list of what this task did NOT touch
+
+## Honest Acceptance Read
+- per-criterion: met / not met / partial
+```
+
+This is mandatory per ADR-0005 — without a run log, the acceptance gate fails.
+
 ## Repo shape
 
 - Project file: `myikai_plugin.uproject`
