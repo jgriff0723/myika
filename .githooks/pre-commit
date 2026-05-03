@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+exec python tools/git-hooks/pre_commit_guard.py

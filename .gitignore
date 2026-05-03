@@ -1,0 +1,93 @@
+# Unreal Engine generated output
+Binaries/
+Intermediate/
+DerivedDataCache/
+Saved/
+.vs/
+*.sln
+*.suo
+*.VC.db
+*.opendb
+
+# Plugin generated output
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json
+service-account*.json
+*-credentials.json
+
+# OS noise
+Thumbs.db
+.DS_Store
+Desktop.ini
+ehthumbs.db
+ehthumbs_vista.db
+
+# IDE state (extra)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.user
+*.user.xml
+*.xcodeproj/
+*.xcworkspace/
+
+# Build artifacts
+*.pdb
+*.exp
+*.lib
+*.dll.exp
+Logs/
+crashinfo*
+
+# Workshop / scratch
+.scratch/
+*.tmp
+
+# =====================================================
+# Third-party content quarantine
+# Excluded from git until per-asset provenance audit
+# completes. See ADR-0003 follow-ups.
+# =====================================================
+
+# Default: ignore everything under project Content/
+# Then explicitly un-ignore the known-safe folders below.
+# Plugins/Myika/Content/ is the actual deliverable surface and
+# is NOT affected by these rules (only project Content/ is).
+Content/*
+!Content/ThirdPerson/
+!Content/Input/
+!Content/LevelPrototyping/
+!Content/Variant_Combat/
+!Content/Variant_Platforming/
+!Content/Variant_SideScrolling/
+!Content/Collections/
+!Content/Developers/
+
+# Fab marketplace plugin (third-party redistribution unverified)
+Plugins/GaeaUnrealTools/
+
+# Notes:
+# - Content/Materials/ — Megascans/Quixel/scan library; redistribution restricted
+# - Content/Characters/ — character pack; verify provenance
+# - Content/Landscape/ — likely contains imported landscape MF library (CellBomb etc.)
+# - Content/Water/ — verify per-folder origin
+# - Content/Terrain/ — Haven.umap is OK in principle but contains references to quarantined assets
+# - Content/Effects/ — verify per-folder origin
+# - Content/__ExternalActors__/ + __ExternalObjects__/ — World Partition references; pull in once their parent maps are un-ignored
