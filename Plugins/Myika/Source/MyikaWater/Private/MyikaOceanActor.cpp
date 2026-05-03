@@ -12,7 +12,13 @@ DEFINE_LOG_CATEGORY_STATIC(LogMyikaOcean, Log, All);
 
 namespace
 {
-	const TCHAR* DefaultOceanMaterialPath = TEXT("/Myika/MyikaWater/Materials/MI_MyikaWater_Ocean.MI_MyikaWater_Ocean");
+	// 2026-05-03: temporarily route through the engine's Water_Material_Inst
+	// while the Myika MIC at /Myika/MyikaWater/Materials/MI_MyikaWater_Ocean
+	// is still being repaired (its parent was a broken stub MIC; a Python
+	// reparent to /Water/Materials/WaterSurface/Water_Material was rejected
+	// by the asset save pipeline). Once the Myika MI is verified to inherit
+	// cleanly from a real SLW master, swap this back. Tracked under MYI-67.
+	const TCHAR* DefaultOceanMaterialPath = TEXT("/Water/Materials/WaterSurface/Water_Material_Inst.Water_Material_Inst");
 }
 
 AMyikaOcean::AMyikaOcean(const FObjectInitializer& ObjectInitializer)
