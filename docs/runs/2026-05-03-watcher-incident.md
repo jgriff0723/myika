@@ -77,10 +77,31 @@ Queue tasks have `## Acceptance Criteria` checkboxes but no enforcement that the
 |----------|--------|-------------|
 | Code lost | None — committed to `21cc427` | N/A |
 | Branches polluted | `feature/myika-v2-s8-buoyancy` carries 20 slices of mixed work | Yes — cherry-pick into per-slice branches during reconciliation |
-| Build broken | Yes — editor build blocked on missing include | Yes — single-line fix per docs/runs/2026-05-03-myi-69-myikalake.md |
+| Build broken | ~~Editor build blocked on missing include~~ **UPDATE 12:13 — both Game + Editor targets compile CLEAN.** A later agent fixed the include before the watcher was killed. All 5 plugin modules (MyikaCore, MyikaSky, MyikaSkyEditor, MyikaWater, MyikaWaterEditor) build + link successfully. | ✅ Already recovered |
 | Linear out of sync | All 22 issues still Backlog | Yes — manual transition |
 | Queue out of sync | 20 tasks in `quarantine/2026-05-03-watcher-incident/` | Yes — recovery plan below |
 | Trust in watcher | Damaged | Yes — once RC-1 thru RC-5 land |
+
+### Build verification log (reconciliation Phase B)
+
+```
+[Game target — myikai_plugin Win64 Development]
+  3 modules compiled: Module.MyikaCore.cpp, Module.MyikaSky.cpp, Module.MyikaWater.cpp
+  Result: Succeeded
+  Time: 10 sec
+
+[Editor target — myikai_pluginEditor Win64 Development]
+  5 modules compiled + 5 DLLs linked:
+    UnrealEditor-MyikaCore.dll
+    UnrealEditor-MyikaSky.dll
+    UnrealEditor-MyikaSkyEditor.dll
+    UnrealEditor-MyikaWater.dll
+    UnrealEditor-MyikaWaterEditor.dll
+  Result: Succeeded
+  Time: 7 sec
+```
+
+This means **all the agents' code is structurally sound** — the architecture is correct, modules link, headers resolve, no missing symbols. The remaining work for each slice is content (uassets, materials, presets) + PIE proof + Linear sync, NOT code rewriting.
 
 ## Recovery plan
 
