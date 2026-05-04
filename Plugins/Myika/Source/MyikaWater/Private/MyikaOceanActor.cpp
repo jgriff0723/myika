@@ -12,13 +12,16 @@ DEFINE_LOG_CATEGORY_STATIC(LogMyikaOcean, Log, All);
 
 namespace
 {
-	// 2026-05-03: temporarily route through the engine's Water_Material_Inst
-	// while the Myika MIC at /Myika/MyikaWater/Materials/MI_MyikaWater_Ocean
-	// is still being repaired (its parent was a broken stub MIC; a Python
-	// reparent to /Water/Materials/WaterSurface/Water_Material was rejected
-	// by the asset save pipeline). Once the Myika MI is verified to inherit
-	// cleanly from a real SLW master, swap this back. Tracked under MYI-67.
-	const TCHAR* DefaultOceanMaterialPath = TEXT("/Water/Materials/WaterSurface/Water_Material_Inst.Water_Material_Inst");
+	// 2026-05-03: now points at the Myika-authored Single Layer Water instance.
+	// MI_MyikaWater_Ocean was rebuilt by tools/Create-MyikaWaterAssets.py to
+	// inherit from M_MyikaWater (real Material with the full SLW graph:
+	// WaterTint, dual normal sample with directional UV scrolling, scattering
+	// + absorption + WaterAlbedo + WaterPhaseG SLW outputs, T_MyikaWater_Normal
+	// procedural normal texture). MI override knobs:
+	//   WaveSteepness=0.6, WaveSpeed=0.08, NormalTiling=0.5, ExtinctionScale=1.0,
+	//   Roughness=0.04, WaterTint=(0.01,0.12,0.22), ScatteringColor=(0.30,0.45,0.45),
+	//   AbsorptionColor=(0.55,0.30,0.15)
+	const TCHAR* DefaultOceanMaterialPath = TEXT("/Myika/MyikaWater/Materials/MI_MyikaWater_Ocean.MI_MyikaWater_Ocean");
 }
 
 AMyikaOcean::AMyikaOcean(const FObjectInitializer& ObjectInitializer)
