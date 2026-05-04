@@ -12,16 +12,16 @@ DEFINE_LOG_CATEGORY_STATIC(LogMyikaOcean, Log, All);
 
 namespace
 {
-	// 2026-05-03: now points at the Myika-authored Single Layer Water instance.
-	// MI_MyikaWater_Ocean was rebuilt by tools/Create-MyikaWaterAssets.py to
-	// inherit from M_MyikaWater (real Material with the full SLW graph:
-	// WaterTint, dual normal sample with directional UV scrolling, scattering
-	// + absorption + WaterAlbedo + WaterPhaseG SLW outputs, T_MyikaWater_Normal
-	// procedural normal texture). MI override knobs:
-	//   WaveSteepness=0.6, WaveSpeed=0.08, NormalTiling=0.5, ExtinctionScale=1.0,
-	//   Roughness=0.04, WaterTint=(0.01,0.12,0.22), ScatteringColor=(0.30,0.45,0.45),
-	//   AbsorptionColor=(0.55,0.30,0.15)
-	const TCHAR* DefaultOceanMaterialPath = TEXT("/Myika/MyikaWater/Materials/MI_MyikaWater_Ocean.MI_MyikaWater_Ocean");
+	// 2026-05-03 ROLLBACK: reverted to engine Water_Material_Inst.
+	// The Myika-authored M_MyikaWater + MI_MyikaWater_Ocean rebuild from
+	// commit 05fa6be was triggering an editor memory leak when L_SkyTest
+	// opened (16GB -> 26GB+ in 20 sec, eventually OOM crash). Suspected
+	// cause: cross-plugin asset registry chain when MI_MyikaWater_Ocean
+	// inherits from M_MyikaWater which uses T_MyikaWater_Normal under
+	// /Myika/MyikaWater/Materials/. Rolled back to the engine-material
+	// state Jacob last confirmed worked (commit 8cad974). Will retry with
+	// a more isolated material graph after the leak is root-caused.
+	const TCHAR* DefaultOceanMaterialPath = TEXT("/Water/Materials/WaterSurface/Water_Material_Inst.Water_Material_Inst");
 }
 
 AMyikaOcean::AMyikaOcean(const FObjectInitializer& ObjectInitializer)
