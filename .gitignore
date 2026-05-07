@@ -43,10 +43,16 @@ ehthumbs_vista.db
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea/
+.cursor/
 *.user
 *.user.xml
 *.xcodeproj/
 *.xcworkspace/
+
+# Python virtual environments (e.g. Plugins/Myika/Python/myika_mcp/.venv — 76 MB)
+.venv/
+venv/
+env/
 
 # Build artifacts
 *.pdb
