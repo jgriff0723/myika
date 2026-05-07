@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "myika-mcp"
+version = "0.1.0"
+description = "MCP server for the Myika Unreal Engine plugin — exposes Myika global state (time, weather, wind, surface) to AI agents."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Myika AI" }]
+dependencies = [
+    "mcp>=1.2.0",
+    "anyio>=4.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "trio>=0.24",
+]
+
+[project.scripts]
+myika-mcp = "myika_mcp.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/myika_mcp"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
