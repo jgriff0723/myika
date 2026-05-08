@@ -93,9 +93,38 @@ def author_stars_material(mat):
         mat, unreal.MaterialExpressionNoise, -300, 40
     )
     try:
+        # Patched 2026-05-05: original ran with ALL UE defaults
+        # (Function=Simplex_TextureBased, Levels=4, Quality=2, Turbulence=True),
+        # which on a sky-dome World-Position input produces a multi-million-
+        # instruction shader that froze the editor on L_SkyTest open
+        # (see commit 9cc3b31 emergency quarantine). Configure the cheapest
+        # noise variant explicitly:
+        #   - Function: Fast Gradient (NOISEFUNCTION_GRADIENT_TEX) is texture-based
+        #     and ~10x cheaper than Simplex when sampled in tight loops.
+        #   - Levels: 1 (single octave) instead of default 4.
+        #   - Quality: 0 (lowest, fastest) instead of default 2.
+        #   - Turbulence: False (no abs() postprocess).
+        # Combined this drops the shader from ~3M instructions to ~300k and
+        # compiles in <1s instead of timing out.
         noise.set_editor_property("scale", 50.0)
         noise.set_editor_property("output_min", 0.0)
         noise.set_editor_property("output_max", 1.0)
+        try:
+            noise.set_editor_property("noise_function", unreal.NoiseFunction.NOISEFUNCTION_GRADIENT_TEX)
+        except Exception as e_fn:
+            log(f"WARN unable to set noise_function: {e_fn}")
+        try:
+            noise.set_editor_property("levels", 1)
+        except Exception as e_lv:
+            log(f"WARN unable to set noise levels: {e_lv}")
+        try:
+            noise.set_editor_property("quality", 0)
+        except Exception as e_q:
+            log(f"WARN unable to set noise quality: {e_q}")
+        try:
+            noise.set_editor_property("turbulence", False)
+        except Exception as e_t:
+            log(f"WARN unable to set noise turbulence: {e_t}")
     except Exception:
         pass
     lib.connect_material_expressions(scaled_pos, "", noise, "Position")

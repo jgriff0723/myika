@@ -88,8 +88,15 @@ def import_normal_texture():
 def make_or_load_master_material():
 	asset_path = f"{MATERIAL_DIR}/{MASTER_NAME}"
 	if unreal.EditorAssetLibrary.does_asset_exist(asset_path):
-		if not unreal.EditorAssetLibrary.delete_asset(asset_path):
-			raise RuntimeError(f"Failed to delete prior master material at {asset_path}")
+		# Patched 2026-05-05: do NOT delete + recreate. The May-3 commit
+		# d81ccbd showed deleting M_MyikaWater while MI_MyikaWater_Ocean +
+		# Lake were still loaded (because L_WaterTest's WaterBodyOcean
+		# referenced them) cascaded through UE Water's plugin asset chain
+		# and triggered a 16GB->26GB+ memory leak in 20s. Reuse the existing
+		# UObject; build_master_material() calls delete_all_material_expressions
+		# right after this returns, so the graph is rebuilt cleanly without
+		# re-instantiating the asset.
+		return load_required_asset(asset_path)
 	asset_tools = unreal.AssetToolsHelpers.get_asset_tools()
 	material = asset_tools.create_asset(
 		MASTER_NAME,
